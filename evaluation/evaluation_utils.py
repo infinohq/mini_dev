@@ -8,6 +8,7 @@ import argparse
 from pathlib import Path
 import time
 import re
+import os
 
 def load_jsonl(file_path):
     data = []
@@ -174,10 +175,13 @@ def print_data(score_lists, count_lists, metric="F1 Score",result_log_file=None)
         f"======================================    {metric}    ====================================="
     )
     print("{:20} {:<20.2f} {:<20.2f} {:<20.2f} {:<20.2f}".format(metric, *score_lists))
+
+    if not os.path.exists(result_log_file):
+        os.makedirs(os.path.dirname(result_log_file), exist_ok=True)
     
      # Log to file in append mode
     if result_log_file is not None:
-        with open(result_log_file, "a") as log_file:
+        with open(result_log_file, "a+") as log_file:
             log_file.write(f"start calculate {metric}\n")
             log_file.write("{:20} {:20} {:20} {:20} {:20}\n".format("", *levels))
             log_file.write(
