@@ -1,5 +1,5 @@
 # DO NOT CHANGE THIS
-db_root_path='../sqlite/dev_databases/'
+db_root_path='../data/dev_databases/'
 num_cpus=16
 meta_time_out=30.0
 # DO NOT CHANGE THIS
@@ -18,20 +18,24 @@ sql_dialect="SQLite" # ONLY Modify this
 # Extract the base filename without extension
 base_name=$(basename "$predicted_sql_path" .json)
 # Define the output log path
-output_log_path="../eval_result/${base_name}.txt"
+output_log_path="../results/eval_result/${base_name}.txt"
 
 case $sql_dialect in
   "SQLite")
-    diff_json_path="../sqlite/mini_dev_sqlite.jsonl"
-    ground_truth_path="../sqlite/mini_dev_sqlite_gold.sql"
+    diff_json_path="../data/mini_dev_sqlite.json"
+    ground_truth_path="../data/mini_dev_sqlite_gold.sql"
+    ;;
+  "coredb")
+    diff_json_path="../data/mini_dev_sqlite.json"
+    ground_truth_path="../data/mini_dev_sqlite_gold.sql"
     ;;
   "PostgreSQL")
-    diff_json_path="../postgresql/mini_dev_postgresql.jsonl"
-    ground_truth_path="../postgresql/mini_dev_postgresql_gold.sql"
+    diff_json_path="../data/mini_dev_postgresql.jsonl"
+    ground_truth_path="../data/mini_dev_postgresql_gold.sql"
     ;;
   "MySQL")
-    diff_json_path="../mysql/mini_dev_mysql.jsonl"
-    ground_truth_path="../mysql/mini_dev_mysql_gold.sql"
+    diff_json_path="../data/mini_dev_mysql.json"
+    ground_truth_path="../data/mini_dev_mysql_gold.sql"
     ;;
   *)
     echo "Invalid SQL dialect: $sql_dialect"
