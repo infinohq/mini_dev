@@ -163,8 +163,8 @@ def connect_mysql():
     db = pymysql.connect(
         host="localhost",
         user="root",
-        password="YOUR_PASSWORD",
-        database="BIRD",
+        password="12345678",
+        database="mini_bird",
         unix_socket="/tmp/mysql.sock",
         # port=3306,
     )
@@ -217,7 +217,7 @@ def generate_schema_prompt_mysql(db_path):
     tables = [table for table in db_table_map[db_name]]
     schemas = {}
     for table in tables:
-        cursor.execute(f"DESCRIBE BIRD.{table}")
+        cursor.execute(f"DESCRIBE mini_bird.{table}")
         raw_schema = cursor.fetchall()
         pretty_schema = format_mysql_create_table(table, raw_schema)
         schemas[table] = pretty_schema
