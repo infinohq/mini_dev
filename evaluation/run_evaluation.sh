@@ -5,11 +5,11 @@ meta_time_out=30.0
 # DO NOT CHANGE THIS
 
 # ************************* #
-predicted_sql_path='../sql_result/predict_mini_dev_gpt-4-32k_cot_SQLite.json' # Replace with your predict sql json path
+predicted_sql_path='../results/ai-result/turbo_output_kg/predict_mini_dev_gpt-4-turbo_cot_MySQL.json' # Replace with your predict sql json path
 # predicted_sql_path='../sql_result/predict_mini_dev_gpt-4-32k_cot_PostgreSQL.json' # Replace with your predict sql json path
 # predicted_sql_path='../sql_result/predict_mini_dev_gpt-4-32k_cot_MySQL.json' # Replace with your predict sql json path
 
-sql_dialect="SQLite" # ONLY Modify this
+sql_dialect="MySQL" # ONLY Modify this
 # sql_dialect="PostgreSQL" # ONLY Modify this
 # sql_dialect="MySQL" # ONLY Modify this
 # ************************* #

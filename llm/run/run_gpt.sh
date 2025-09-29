@@ -16,7 +16,7 @@ num_threads=3
 # Choose the SQL dialect to run, e.g. SQLite, MySQL, PostgreSQL
 # PLEASE NOTE: You have to setup the database information in table_schema.py 
 # if you want to run the evaluation script using MySQL or PostgreSQL
-sql_dialect='SQLite'
+sql_dialect='MySQL'
 
 # Choose the output path for the generated SQL queries
 data_output_path='../results/ai-result/turbo_output/'
