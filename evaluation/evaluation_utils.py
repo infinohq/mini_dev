@@ -2,6 +2,12 @@ import json
 import psycopg2
 import pymysql
 import sqlite3
+import requests
+import sys
+import argparse
+from pathlib import Path
+import time
+import re
 
 def load_jsonl(file_path):
     data = []
@@ -41,6 +47,50 @@ def connect_mysql():
     )
     return db
 
+class CoreDBConnection:
+    def __init__(self, url):
+        self.url= url
+    
+    def execute(self, query, timeout=30):
+        """
+        Execute a single SQL command via HTTP request.
+        
+        Args:
+            query (str): The SQL query to execute
+            url (str): The database endpoint URL
+            timeout (int): Request timeout in seconds
+        
+        Returns:
+            dict: Response data with success status and result
+        """
+        payload = json.dumps({
+            "query": query.strip()
+        })
+        
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        
+        try:
+            response = requests.request("GET", self.url, headers=headers, data=payload, timeout=timeout)
+            
+            return {
+                "success": response.status_code == 200,
+                "status_code": response.status_code,
+                "response": response.text,
+                "query": query.strip()
+            }
+        except requests.exceptions.RequestException as e:
+            return {
+                "success": False,
+                "status_code": None,
+                "response": f"Request failed: {str(e)}",
+                "query": query.strip()
+            }
+
+def connect_coredb():
+    return CoreDBConnection(url="http://localhost:5005/000000000000/_sql")
+
 
 def connect_db(sql_dialect, db_path):
     if sql_dialect == "SQLite":
@@ -49,20 +99,28 @@ def connect_db(sql_dialect, db_path):
         conn = connect_mysql()
     elif sql_dialect == "PostgreSQL":
         conn = connect_postgresql()
+    elif sql_dialect == "coredb":
+        conn = connect_coredb()
     else:
         raise ValueError("Unsupported SQL dialect")
     return conn
 
 
 def execute_sql(predicted_sql, ground_truth, db_path, sql_dialect, calculate_func):
-    conn = connect_db(sql_dialect, db_path)
     # Connect to the database
-    cursor = conn.cursor()
-    cursor.execute(predicted_sql)
-    predicted_res = cursor.fetchall()
-    cursor.execute(ground_truth)
-    ground_truth_res = cursor.fetchall()
-    conn.close()
+    conn = connect_db(sql_dialect, db_path)
+
+    if sql_dialect == "coredb":
+        predicted_res = conn.execute(predicted_sql)
+        ground_truth_res = conn.execute(ground_truth)
+    else:
+        cursor = conn.cursor()
+        cursor.execute(predicted_sql)
+        predicted_res = cursor.fetchall()
+        cursor.execute(ground_truth)
+        ground_truth_res = cursor.fetchall()
+        conn.close()
+
     res = calculate_func(predicted_res, ground_truth_res)
     return res
 
