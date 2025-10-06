@@ -1,4 +1,4 @@
-# BIRD-SQL Mini-Dev 
+# BIRD-SQL Mini-Dev
 
 <p align="center">
   <img src="materials/bird_circle_main.png" style="width: 30%; min-width: 100px; display: block; margin: auto;">
@@ -23,6 +23,11 @@
 <p align="center" width="100%">
 <a><img src="materials/intro.png" style="width: 100%; min-width: 300px; display: block; margin: auto;"></a>
 </p>
+
+### Infino Updates
+Added support for Snowflake backend.
+Download the tables data [here](https://drive.google.com/file/d/1WkpKR8HHupp4nGjCSr3D3BdsUMp17vzt/view?usp=sharing)
+Download the updated query data [here](https://drive.google.com/file/d/1iqvATKctCOx-zyJUTR83vM5yUpd0UoQa/view?usp=sharing)
 
 ### Update 2025-09-19
 We’ve released **bird23-train-filtered**, a high-quality filtered subset of the BIRD train split (6,601/9,428 ≈70%) that works as a drop-in replacement for text-to-SQL finetuning; see the dataset at https://huggingface.co/datasets/birdsql/bird23-train-filtered and example finetuning usage in `./finetuning`.
@@ -79,7 +84,7 @@ print(dataset["mini_dev_mysql"][0])
 print(dataset["mini_dev_pg"][0])
 ```
 
-We appreciate the continuous support and feedback from the community. 
+We appreciate the continuous support and feedback from the community.
 
 ## Overview
 Here, we provide a Lite version of developtment dataset: **Mini-Dev**. This mini-dev dataset is designed to facilitate efficient and cost-effective development cycles, especially for testing and refining SQL query generation models. This dataset results from community feedback, leading to the compilation of 500 high-quality text2sql pairs derived from 11 distinct databases in a development environment. To further enhance the practicality of the BIRD system in industry settings and support the development of text-to-SQL models, we make the Mini-Dev dataset available in both **MySQL** and **PostgreSQL**.
@@ -126,7 +131,7 @@ The dataset contains the main following resources:
 - `database`: The database should be stored under the [`./mini_dev_data/dev_databases/`](./mini_dev_data/dev_databases/). In each database folder, it has two components:
   - `database_description`: the csv files are manufactured to describe database schema and its values for models to explore or references.
   - `sqlite`: The database contents in BIRD.
-> [!NOTE] 
+> [!NOTE]
 > You have to download the latest dev databases in order to construct database in the MySQL and PostgreSQL. If you use the SQLite version only, you can use the original dev databases.
 - `data`: Each text-to-SQL pairs with the oracle knowledge evidence is stored as a json file, i.e., `mini_dev_sqlite.json` is stored on [`./mini_dev_data/mini_dev_sqlite.json`](./mini_dev_data/mini_dev_sqlite.json). In each json file, it has three main parts:
   - `db_id`: the names of databases
@@ -146,11 +151,11 @@ You can locate the SQL queries within the `mini_dev_mysql.json` and `mini_dev_po
 
 ### MySQL
 1. Download and install the MySQL from the official website: https://dev.mysql.com/downloads/mysql/
-2. Set the environment variables: 
+2. Set the environment variables:
 ```
 export PATH=$PATH:/usr/local/mysql/bin
 ```
-3. Start the MySQL server: 
+3. Start the MySQL server:
 ```
 sudo /usr/local/mysql/support-files/mysql.server start
 ```
@@ -172,7 +177,7 @@ SET GLOBAL sql_mode='{EVERYTHING SHOW IN THE ABOVE COMMAND EXCEPT ONLY_FULL_GROU
 ```
 
 ### PostgreSQL
-1. Download and install the postgresql from the official website: https://www.postgresql.org/download/ 
+1. Download and install the postgresql from the official website: https://www.postgresql.org/download/
 2. Download the pgAdmin4 from the official website: https://www.pgadmin.org/download/ (Recommended to monitor the database)
 3. In pgADmin4/terminal create a new database called `BIRD`
 4. Construct the database by run the following command (You can find PostgreSQL version database:`BIRD_dev.sql` in the `MINIDEV_postgresql` folder):
@@ -246,31 +251,31 @@ sh run_evaluation.sh
 #### Soft F1-Score:
 Alongside the update to the Mini-Dev set, we introduced a new evaluation metric—the soft F1-score. This metric is specifically designed to assess the performance of text-to-SQL models by measuring the similarity between the tables produced by predicted SQL queries and those from the ground truth. In a nutshell, the soft F1-score is a more lenient metric that reduces the impact of column order and missing values in the tables produced by predicted SQL queries.
 
-The following demonstrate how we calculate the soft F1-score. 
+The following demonstrate how we calculate the soft F1-score.
 
 Ground truth SQL resulted table:
-| Row  |  | |  
+| Row  |  | |
 |:----------:|:----------:|:----------:|
-| 1 | 'Apple' | 325 | 
-| 2  | 'Orange' |  | 
+| 1 | 'Apple' | 325 |
+| 2  | 'Orange' |  |
 | 3| 'Banana' | 119 |
 
 Predicted SQL resulted table:
-| Row |  | |  
+| Row |  | |
 |:----------:|:----------:|:----------:|
-| 1 | 325 |'Apple' |  
-| 2  | 191 |'Orange' |  
+| 1 | 325 |'Apple' |
+| 2  | 191 |'Orange' |
 | 3| |'Banana' |
 
 The soft F1-score is calculated as follows:
 
 |  | Matched| Pred_only | Gold_only  |
 |----------|:----------:|:----------:|:----------:|
-| **Row 1** | 2 | 0 | 0 | 
-| **Row 2** | 1 | 1 | 0 | 
-| **Row 3** | 1 | 0 | 1 | 
+| **Row 1** | 2 | 0 | 0 |
+| **Row 2** | 1 | 1 | 0 |
+| **Row 3** | 1 | 0 | 1 |
 
-* tp = SUM(Matched) = 4 
+* tp = SUM(Matched) = 4
 * fp = SUM(Pred_only) = 1
 * fn = SUM(Gold_only) = 1
 * Precision = tp / (tp + fp) = 4 / 5 = 0.8
@@ -350,8 +355,8 @@ We extend our sincere gratitude to the invaluable feedbacks from the open commun
 
 For any questions, please contact us by bird.bench23@gmail.com.
 
-## My To-Do List  
-  
+## My To-Do List
+
 - [x] Release BIRD MINI DEV
 - [x] Implement [`TA-SQL`](https://github.com/quge2023/TA-SQL) as ICL Reasoning Baseline.
 - [ ] Implement more open-source LLMs.
