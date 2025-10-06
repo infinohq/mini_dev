@@ -5,11 +5,11 @@ meta_time_out=30.0
 # DO NOT CHANGE THIS
 
 # ************************* #
-predicted_sql_path='../results/ai-result/turbo_output_kg/predict_mini_dev_gpt-4-turbo_cot_MySQL.json' # Replace with your predict sql json path
+predicted_sql_path='../results/ai-result/turbo_output/predict__snowflake.json' # Replace with your predict sql json path
 # predicted_sql_path='../sql_result/predict_mini_dev_gpt-4-32k_cot_PostgreSQL.json' # Replace with your predict sql json path
 # predicted_sql_path='../sql_result/predict_mini_dev_gpt-4-32k_cot_MySQL.json' # Replace with your predict sql json path
 
-sql_dialect="MySQL" # ONLY Modify this
+sql_dialect="snowflake" # ONLY Modify this
 # sql_dialect="PostgreSQL" # ONLY Modify this
 # sql_dialect="MySQL" # ONLY Modify this
 # ************************* #
@@ -28,6 +28,10 @@ case $sql_dialect in
   "coredb")
     diff_json_path="../data/mini_dev_sqlite.json"
     ground_truth_path="../data/mini_dev_sqlite_gold.sql"
+    ;;
+  "snowflake")
+    diff_json_path="../data/mini_dev_snowflake.json"
+    ground_truth_path="../data/mini_dev_snowflake_gold.sql"
     ;;
   "PostgreSQL")
     diff_json_path="../data/mini_dev_postgresql.jsonl"

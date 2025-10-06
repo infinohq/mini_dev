@@ -150,7 +150,7 @@ if __name__ == "__main__":
     simple_acc, moderate_acc, challenging_acc, acc, count_lists = compute_acc_by_diff(
         exec_result, args.diff_json_path
     )
-    score_lists = [simple_acc, moderate_acc, challenging_acc, acc] 
+    score_lists = [simple_acc, moderate_acc, challenging_acc, acc]
     print_data(score_lists, count_lists, metric="EX",result_log_file=args.output_log_path)
     print(
         "==========================================================================================="

@@ -9,6 +9,7 @@ from pathlib import Path
 import time
 import re
 import os
+import snowflake.connector
 
 def load_jsonl(file_path):
     data = []
@@ -50,30 +51,30 @@ def connect_mysql():
 class CoreDBConnection:
     def __init__(self, url):
         self.url= url
-    
+
     def execute(self, query, timeout=30):
         """
         Execute a single SQL command via HTTP request.
-        
+
         Args:
             query (str): The SQL query to execute
             url (str): The database endpoint URL
             timeout (int): Request timeout in seconds
-        
+
         Returns:
             dict: Response data with success status and result
         """
         payload = json.dumps({
             "query": query.strip()
         })
-        
+
         headers = {
             'Content-Type': 'application/json'
         }
-        
+
         try:
             response = requests.request("GET", self.url, headers=headers, data=payload, timeout=timeout)
-            
+
             return {
                 "success": response.status_code == 200,
                 "status_code": response.status_code,
@@ -91,6 +92,17 @@ class CoreDBConnection:
 def connect_coredb():
     return CoreDBConnection(url="http://localhost:5005/000000000000/_sql")
 
+def connect_snowflake():
+    # Snowflake configuration
+    snowflake_config = {
+        "user": "TECHINFINO",
+        "password": "Eeny-meeny-myni-m0",
+        "account": "NOZDLLM-PBC47268",
+        "warehouse": "COMPUTE_WH",
+        "database": "BIRD_BENCH",
+        "schema": "PUBLIC",
+    }
+    return snowflake.connector.connect(**snowflake_config)
 
 def connect_db(sql_dialect, db_path):
     if sql_dialect == "SQLite":
@@ -101,6 +113,8 @@ def connect_db(sql_dialect, db_path):
         conn = connect_postgresql()
     elif sql_dialect == "coredb":
         conn = connect_coredb()
+    elif sql_dialect == "snowflake":
+        conn = connect_snowflake()
     else:
         raise ValueError("Unsupported SQL dialect")
     return conn
@@ -147,7 +161,7 @@ def package_sqls(
                     db_name = "financial"
             else:
                 sql = " "
-                db_name = "financial"               
+                db_name = "financial"
             clean_sqls.append(sql)
 
     elif mode == "gt":
@@ -177,7 +191,7 @@ def print_data(score_lists, count_lists, metric="F1 Score",result_log_file=None)
 
     if not os.path.exists(result_log_file):
         os.makedirs(os.path.dirname(result_log_file), exist_ok=True)
-    
+
      # Log to file in append mode
     if result_log_file is not None:
         with open(result_log_file, "a+") as log_file:
