@@ -119,8 +119,7 @@ def connect_db(sql_dialect, db_path):
         raise ValueError("Unsupported SQL dialect")
     return conn
 
-
-def execute_sql(predicted_sql, ground_truth, db_path, sql_dialect, calculate_func):
+def execute_sql(predicted_sql, ground_truth, db_path, idx, sql_dialect, calculate_func):
     # Connect to the database
     conn = connect_db(sql_dialect, db_path)
 
@@ -135,6 +134,9 @@ def execute_sql(predicted_sql, ground_truth, db_path, sql_dialect, calculate_fun
         ground_truth_res = cursor.fetchall()
         conn.close()
 
+    print("idx:", idx)
+    print("predicted res: ", predicted_res)
+    print("ground truth res: ", ground_truth_res)
     res = calculate_func(predicted_res, ground_truth_res)
     return res
 

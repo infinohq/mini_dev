@@ -30,7 +30,7 @@ def execute_model(
         res = func_timeout(
             meta_time_out,
             execute_sql,
-            args=(predicted_sql, ground_truth, db_place, sql_dialect, calculate_ex),
+            args=(predicted_sql, ground_truth, db_place, idx, sql_dialect, calculate_ex),
         )
     except KeyboardInterrupt:
         sys.exit(0)
