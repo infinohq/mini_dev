@@ -1,4 +1,4 @@
-eval_path='../data/mini_dev_mysql.json' # _sqlite.json, _mysql.json, _postgresql.json
+eval_path='../data/mini_dev_snowflake.json'
 dev_path='./output/'
 db_root_path='../data/dev_databases/'
 use_knowledge='True'
@@ -14,15 +14,17 @@ engine='gpt-4-turbo'
 num_threads=3
 
 # Choose the SQL dialect to run, e.g. SQLite, MySQL, PostgreSQL
-# PLEASE NOTE: You have to setup the database information in table_schema.py 
+# PLEASE NOTE: You have to setup the database information in table_schema.py or other methods
 # if you want to run the evaluation script using MySQL or PostgreSQL
-sql_dialect='MySQL'
+sql_dialect='snowflake'
 
 # Choose the output path for the generated SQL queries
 data_output_path='../results/ai-result/turbo_output/'
 data_kg_output_path='../results/ai-result/turbo_output_kg/'
 
-echo "generate $engine batch, run in $num_threads threads, with knowledge: $use_knowledge, with chain of thought: $cot"
-python3 -u ./src/gpt_request.py --db_root_path ${db_root_path} --api_key ${YOUR_API_KEY} --mode ${mode} \
---engine ${engine} --eval_path ${eval_path} --data_output_path ${data_kg_output_path} --use_knowledge ${use_knowledge} \
---chain_of_thought ${cot} --num_process ${num_threads} --sql_dialect ${sql_dialect}
+# echo "generate $engine batch, run in $num_threads threads, with knowledge: $use_knowledge, with chain of thought: $cot"
+# python3 -u ./src/gpt_request.py --db_root_path ${db_root_path} --api_key ${YOUR_API_KEY} --mode ${mode} \
+# --engine ${engine} --eval_path ${eval_path} --data_output_path ${data_kg_output_path} --use_knowledge ${use_knowledge} \
+# --chain_of_thought ${cot} --num_process ${num_threads} --sql_dialect ${sql_dialect}
+
+python3 -u ./src/fino_request.py --eval_path ${eval_path} --data_output_path ${data_output_path} --sql_dialect ${sql_dialect}
