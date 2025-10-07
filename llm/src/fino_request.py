@@ -139,7 +139,8 @@ def generate_sql_file(sql_lst, output_path=None):
     """
     Function to save the SQL results to a file.
     """
-    sql_lst.sort(key=lambda x: x[1])
+    # We dont need to sort at the moment because we're running queries sequentially
+    # sql_lst.sort(key=lambda x: x[1])
     result = {}
     for i, sql in enumerate(sql_lst):
         result[i] = sql
@@ -185,5 +186,6 @@ if __name__ == "__main__":
         + args.sql_dialect
         + ".json"
     )
+    print(responses)
     generate_sql_file(sql_lst=responses, output_path=output_path)
     print("Successfully generated SQL queries. Saved at ", output_path)
