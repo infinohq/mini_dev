@@ -1,4 +1,5 @@
 eval_path='../data/mini_dev_snowflake.json'
+metadata_path='../data/dev_tables.json'
 dev_path='./output/'
 db_root_path='../data/dev_databases/'
 use_knowledge='True'
@@ -27,4 +28,4 @@ data_kg_output_path='../results/ai-result/turbo_output_kg/'
 # --engine ${engine} --eval_path ${eval_path} --data_output_path ${data_kg_output_path} --use_knowledge ${use_knowledge} \
 # --chain_of_thought ${cot} --num_process ${num_threads} --sql_dialect ${sql_dialect}
 
-python3 -u ./src/fino_request.py --eval_path ${eval_path} --data_output_path ${data_output_path} --sql_dialect ${sql_dialect}
+python3 -u ./src/fino_request.py --eval_path ${eval_path} --data_output_path ${data_output_path} --metadata_path ${metadata_path} --sql_dialect ${sql_dialect}

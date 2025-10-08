@@ -124,12 +124,21 @@ def generate_sql(thread_id, query, summary):
             print("Generated SQL: ", generated_sql)
             return generated_sql
 
-def parse_questions(datasets):
+def parse_questions(datasets, metadata):
     question_list = []
     for i, data in enumerate(datasets):
+        database_group_id = data["db_id"]
+        metadata_item = next((item for item in metadata if item["db_id"] == database_group_id), {})
+        tables = metadata_item.get("table_names_original", [])
+        summary = data.get("evidence", "")
+        question = data.get("question", "")
+        if len(tables) > 0:
+            table_names = ", ".join(tables)
+            summary += f"\n Use the following tables {table_names.upper()}."
+
         question = {
-            "query": data["question"],
-            "summary": data["evidence"]
+            "query": question,
+            "summary": summary,
         }
         question_list.append(question)
 
@@ -158,12 +167,14 @@ if __name__ == "__main__":
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument("--eval_path", type=str, default="")
     args_parser.add_argument("--sql_dialect", type=str, default="SQLite")
+    args_parser.add_argument("--metadata_path", type=str)
     args_parser.add_argument("--data_output_path", type=str)
     args = args_parser.parse_args()
 
     print("Parsing evaluation questions at ", args.eval_path)
     eval_data = json.load(open(args.eval_path, "r"))
-    questions = parse_questions(datasets=eval_data)
+    metadata = json.load(open(args.metadata_path, "r"))
+    questions = parse_questions(datasets=eval_data, metadata=metadata)
     print(questions)
 
     # Set up Fino for query generation
