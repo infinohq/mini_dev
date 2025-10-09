@@ -11,12 +11,14 @@ import re
 import os
 import snowflake.connector
 
+
 def load_jsonl(file_path):
     data = []
     with open(file_path, "r") as file:
         for line in file:
             data.append(json.loads(line))
     return data
+
 
 def load_json(dir):
     with open(dir, "r") as j:
@@ -48,9 +50,10 @@ def connect_mysql():
     )
     return db
 
+
 class CoreDBConnection:
     def __init__(self, url):
-        self.url= url
+        self.url = url
 
     def execute(self, query, timeout=30):
         """
@@ -64,33 +67,33 @@ class CoreDBConnection:
         Returns:
             dict: Response data with success status and result
         """
-        payload = json.dumps({
-            "query": query.strip()
-        })
+        payload = json.dumps({"query": query.strip()})
 
-        headers = {
-            'Content-Type': 'application/json'
-        }
+        headers = {"Content-Type": "application/json"}
 
         try:
-            response = requests.request("GET", self.url, headers=headers, data=payload, timeout=timeout)
+            response = requests.request(
+                "GET", self.url, headers=headers, data=payload, timeout=timeout
+            )
 
             return {
                 "success": response.status_code == 200,
                 "status_code": response.status_code,
                 "response": response.text,
-                "query": query.strip()
+                "query": query.strip(),
             }
         except requests.exceptions.RequestException as e:
             return {
                 "success": False,
                 "status_code": None,
                 "response": f"Request failed: {str(e)}",
-                "query": query.strip()
+                "query": query.strip(),
             }
+
 
 def connect_coredb():
     return CoreDBConnection(url="http://localhost:5005/000000000000/_sql")
+
 
 def connect_snowflake():
     # Snowflake configuration
@@ -103,6 +106,7 @@ def connect_snowflake():
         "schema": "PUBLIC",
     }
     return snowflake.connector.connect(**snowflake_config)
+
 
 def connect_db(sql_dialect, db_path):
     if sql_dialect == "SQLite":
@@ -118,6 +122,7 @@ def connect_db(sql_dialect, db_path):
     else:
         raise ValueError("Unsupported SQL dialect")
     return conn
+
 
 def execute_sql(predicted_sql, ground_truth, db_path, idx, sql_dialect, calculate_func):
     # Connect to the database
@@ -141,9 +146,7 @@ def execute_sql(predicted_sql, ground_truth, db_path, idx, sql_dialect, calculat
     return res
 
 
-def package_sqls(
-    sql_path, db_root_path, mode="pred"
-):
+def package_sqls(sql_path, db_root_path, mode="pred"):
     clean_sqls = []
     db_path_list = []
     if mode == "pred":
@@ -181,7 +184,7 @@ def sort_results(list_of_dicts):
     return sorted(list_of_dicts, key=lambda x: x["sql_idx"])
 
 
-def print_data(score_lists, count_lists, metric="F1 Score",result_log_file=None):
+def print_data(score_lists, count_lists, metric="F1 Score", result_log_file=None):
     levels = ["simple", "moderate", "challenging", "total"]
     print("{:20} {:20} {:20} {:20} {:20}".format("", *levels))
     print("{:20} {:<20} {:<20} {:<20} {:<20}".format("count", *count_lists))
@@ -194,7 +197,7 @@ def print_data(score_lists, count_lists, metric="F1 Score",result_log_file=None)
     if not os.path.exists(result_log_file):
         os.makedirs(os.path.dirname(result_log_file), exist_ok=True)
 
-     # Log to file in append mode
+    # Log to file in append mode
     if result_log_file is not None:
         with open(result_log_file, "a+") as log_file:
             log_file.write(f"start calculate {metric}\n")
