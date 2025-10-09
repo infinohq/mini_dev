@@ -68,61 +68,65 @@ def setup_fino():
     return thread_id
 
 def generate_sql(thread_id, query, summary):
-    print("Generating SQL queries for thread: ", thread_id)
-    url = f"ws://{IAI_BASE}/_conversation/ws"
-    headers = {
-        'content-type': 'application/json',
-        'x-infino-account-id': '000000000000',
-        'x-infino-username': 'admin',
-        'x-infino-thread-id': thread_id,
-        'x-infino-client-id': 'birdbench'
-    }
+    try:
+        print("Generating SQL queries for thread: ", thread_id)
+        url = f"ws://{IAI_BASE}/_conversation/ws"
+        headers = {
+            'content-type': 'application/json',
+            'x-infino-account-id': '000000000000',
+            'x-infino-username': 'admin',
+            'x-infino-thread-id': thread_id,
+            'x-infino-client-id': 'birdbench'
+        }
 
-    ws = websocket.WebSocket()
-    ws.connect(url, header=headers)
-    ws.send(json.dumps(
-        {
-            "content": {
-                "user_query": query,
-                "type": "user",
-                "summary": summary,
-                "data": {},
-                "vegaspec": {},
-                "querydsl": {},
-                "followup_queries": [],
-                "sender_agent": "user",
-                "user_context": {
-                    "viz_querydsl": {},
-                    "syntax": "sql",
-                    "model": "auto"
+        ws = websocket.WebSocket()
+        ws.connect(url, header=headers)
+        ws.send(json.dumps(
+            {
+                "content": {
+                    "user_query": query,
+                    "type": "user",
+                    "summary": summary,
+                    "data": {},
+                    "vegaspec": {},
+                    "querydsl": {},
+                    "followup_queries": [],
+                    "sender_agent": "user",
+                    "user_context": {
+                        "viz_querydsl": {},
+                        "syntax": "sql",
+                        "model": "auto"
+                    }
                 }
             }
-        }
-    ))
+        ))
 
-    while True:
-        time.sleep(1)
-        try:
-            response = ws.recv()
-        except websocket.WebSocketConnectionClosedException:
-            print("WebSocket connection closed. Reconnecting...")
-            ws.connect(url, header=headers)
-            continue
-        except Exception as e:
-            print(e)
-            break
-        json_response = json.loads(response)
-        content = json_response.get("content")
-        if content == None:
-            continue
+        while True:
+            time.sleep(1)
+            try:
+                response = ws.recv()
+            except websocket.WebSocketConnectionClosedException:
+                print("WebSocket connection closed. Reconnecting...")
+                ws.connect(url, header=headers)
+                continue
+            except Exception as e:
+                print(e)
+                break
+            json_response = json.loads(response)
+            content = json_response.get("content")
+            if content == None:
+                continue
 
-        if content.get("type") == "result":
-            print("Received result: ")
-            print(content)
-            generated_sql = content.get("sql")
-            ws.close()
-            print("Generated SQL: ", generated_sql)
-            return generated_sql
+            if content.get("type") == "result":
+                print("Received result: ")
+                print(content)
+                generated_sql = content.get("sql")
+                ws.close()
+                print("Generated SQL: ", generated_sql)
+                return generated_sql
+    except:
+        print("An error occurred while processing the WebSocket response.")
+        return "<Error generating SQL Response>"
 
 def parse_questions(datasets, metadata):
     question_list = []
